@@ -1,0 +1,17 @@
+{
+    "requires": [
+        "bare-metal"
+    ],
+    "target_overrides": {
+        "*": {
+            "target.c_lib": "std",
+            "target.printf_lib": "minimal-printf",
+            "platform.callback-nontrivial": true,
+            "platform.minimal-printf-enable-floating-point": false,
+            "platform.stdio-minimal-console-only": true
+        },
+        "NUCLEO_F401RE": {
+            "target.clock_source": "USE_PLL_HSE_XTAL"
+        }
+    }
+}
