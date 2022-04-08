@@ -160,7 +160,7 @@ private:
     void on_fall()
     {
         // Respond only if the interval is longer than the threshold.
-        if (g_now() - m_last_pressed >= 50ms)
+        if (g_now() - m_last_pressed >= 150ms)
         {
             if (m_callback)
                 m_callback();
