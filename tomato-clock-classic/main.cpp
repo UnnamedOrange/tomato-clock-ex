@@ -408,7 +408,7 @@ private:
     }
 
 private:
-    void setup_wifi()
+    bool setup_wifi()
     {
         auto wrapper = [&](const std::string& reply) {
             printf("%s\n", reply.c_str());
@@ -418,7 +418,7 @@ private:
         string_view ssid = "87654321";
         string_view password = "87654321";
         if (!wrapper(m_esp8266.reset()))
-            return;
+            return false;
         wrapper(m_esp8266.get_version());
         wrapper(m_esp8266.set_mode(3));
         wrapper(m_esp8266.set_mux_mode(0));
@@ -426,6 +426,7 @@ private:
         wrapper(m_esp8266.join_ap(ssid, password));
         wrapper(m_esp8266.get_ip());
         wrapper(m_esp8266.get_connection_status());
+        return true;
     }
 
 public:
@@ -444,7 +445,8 @@ public:
         gui_show_welcome();
 
         // Setup WiFi.
-        setup_wifi();
+        if (!setup_wifi())
+            rtos::ThisThread::sleep_for(1s);
 
         // Draw the background.
         gui_draw_background();
