@@ -22,7 +22,7 @@
 
 #include "eeprom_default_config.hpp"
 
-namespace eeprom
+namespace modules
 {
     /**
      * @brief Access the internal EEPROM with FlashIAPBlockDevice by mbed.
@@ -233,4 +233,4 @@ namespace eeprom
             return *this;
         }
     };
-} // namespace eeprom
+} // namespace module
