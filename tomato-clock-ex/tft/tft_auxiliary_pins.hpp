@@ -50,14 +50,14 @@ namespace modules
     public:
         /**
          * @brief Hardware reset the TFT.
-         * @note This function is to sleep for 150ms;
+         * @note This function is to sleep for 125ms;
          */
         void reset()
         {
             _rst = 0;
-            rtos::ThisThread::sleep_for(100ms);
+            rtos::ThisThread::sleep_for(5ms);
             _rst = 1;
-            rtos::ThisThread::sleep_for(50ms);
+            rtos::ThisThread::sleep_for(120ms);
         }
 
     public:
