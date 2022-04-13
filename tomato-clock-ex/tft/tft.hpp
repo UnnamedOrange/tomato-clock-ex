@@ -9,4 +9,8 @@
 
 #pragma once
 
-#include "tft_ll_device.hpp"
+#include "tft_auxiliary_pins.hpp"
+#include "tft_device.hpp"
+#include "tft_spi_base.hpp"
+#include "tft_spi_impl_1.hpp"
+#include "tft_spi_impl_2.hpp"
