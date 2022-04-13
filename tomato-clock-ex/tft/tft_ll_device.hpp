@@ -58,9 +58,11 @@ namespace modules
          * @brief The SPI works with 8-bit data.
          */
         using spi_bits_t = uint8_t;
+        constexpr static int spi_frequency = 12500000;
         tft_ll_device()
         {
             _tft_spi.format(spi_bits, spi_mode);
+            _tft_spi.frequency(spi_frequency);
         }
 
     public:
