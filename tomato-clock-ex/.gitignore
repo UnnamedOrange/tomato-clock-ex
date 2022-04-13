@@ -13,6 +13,7 @@ BUILD
 GettingStarted.html
 mbed_config.h
 DebugConfig/
+EventRecorderStub.scvd
 
 # VS Code
 .vscode/
