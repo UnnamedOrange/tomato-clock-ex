@@ -53,39 +53,58 @@ namespace modules
             _cs = 1;
             _spi.unlock();
         }
-        /**
-         * @brief Write once to the SPI. Lock should be set @b mannually.
-         *
-         * @param data Data to write.
-         */
-        void _write_without_lock(spi_bits_t data)
-        {
-            _spi.write(data);
-        }
 
     public:
         /**
-         * @brief Write a sequence to the SPI. Lock is set @b automatically.
+         * @brief Write once to the SPI.
          *
-         * @param iterable An iterable object with elements of type spi_bits_t.
+         * @param data One piece of data to write.
+         * Note that type of data is int rather than spi_bits_t.
+         * @return int Response from the SPI. Always -1.
          */
-        template <typename iterable_t>
-        void write(const iterable_t& iterable)
+        int write(int data)
         {
             _select();
-            for (const spi_bits_t& data : iterable)
-                _spi.write(data);
+            int ret = _spi.write(data);
+            _deselect();
+            return ret;
+        }
+        /**
+         * @brief Write a sequence to the SPI.
+         *
+         * @param data Pointer to the buffer to write.
+         * Note that type of the elements is not constrainted.
+         * @param size Size of the buffer.
+         */
+        void write(const void* data, size_t size)
+        {
+            _select();
+            _spi.write(reinterpret_cast<const char*>(data),
+                       static_cast<int>(size), nullptr, 0);
             _deselect();
         }
         /**
-         * @brief Write a sequence to the SPI. Lock is set @b automatically.
+         * @brief Write a sequence to the SPI.
          *
-         * @param iterable An iterable object with elements of type @ref
-         * spi_bits_t.
+         * @param native_array Data in a native array to write.
          */
-        void write(const std::initializer_list<spi_bits_t>& list)
+        template <size_t size>
+        void write(const spi_bits_t (&native_array)[size])
         {
-            write<std::initializer_list<spi_bits_t>>(list);
+            write(native_array, size);
+        }
+        /**
+         * @brief Write a sequence to the SPI.
+         *
+         * @param array_object Data in an array like object to write.
+         */
+        template <typename array_like_t>
+        void write(const array_like_t& array_object)
+        {
+            static_assert(std::is_same<typename array_like_t::value_type,
+                                       spi_bits_t>::value,
+                          "array_like_t must be an array of spi_bits_t.");
+            write(array_object.data(), array_object.size());
         }
     };
 } // namespace modules
