@@ -19,7 +19,7 @@ namespace modules
 {
     /**
      * @brief Implement SPI of TFT module with DMA provided by HAL.
-     * @note The SPI works with 8-bit data in mode 3. MISO is not used.
+     * @note The SPI works with 8-bit data in mode 0. MISO is not used.
      */
     template <>
     class _tft_spi<true> : public _tft_spi_base

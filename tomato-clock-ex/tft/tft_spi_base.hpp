@@ -17,7 +17,7 @@ namespace modules
 {
     /**
      * @brief Base class for SPI of TFT module on the tomato clock.
-     * @note The SPI works with 8-bit data in mode 3. MISO is not used.
+     * @note The SPI works with 8-bit data in mode 0. MISO is not used.
      */
     class _tft_spi_base
     {
@@ -33,16 +33,16 @@ namespace modules
          */
         constexpr static int spi_bits = 8;
         /**
-         * @brief The SPI works in mode 3.
+         * @brief The SPI works in mode 0.
          */
-        constexpr static int spi_mode = 3;
+        constexpr static int spi_mode = 0;
         /**
          * @brief The SPI works with 8-bit data.
          */
         using spi_bits_t = uint8_t;
 
     protected:
-        constexpr static int spi_frequency = 12500000;
+        constexpr static int spi_frequency = 20000000;
     };
 
     /**

@@ -19,14 +19,15 @@ namespace modules
 {
     /**
      * @brief Implement SPI of TFT module with mbed::SPI.
-     * @note The SPI works with 8-bit data in mode 3. MISO is not used.
+     * @note The SPI works with 8-bit data in mode 0. MISO is not used.
      */
     template <>
     class _tft_spi<false> : public _tft_spi_base
     {
     private:
-        mbed::SPI _spi{PIN_SPI_MOSI, PIN_SPI_MISO, PIN_SPI_SCLK, PIN_SPI_CS,
-                       mbed::use_gpio_ssel};
+        mbed::SPI _spi{PIN_SPI_MOSI, PIN_SPI_MISO, PIN_SPI_SCLK};
+        // Set CS manually or it fails in release profile.
+        mbed::DigitalOut _cs{PIN_SPI_CS};
 
     public:
         _tft_spi()
@@ -37,17 +38,19 @@ namespace modules
 
     private:
         /**
-         * @brief Lock the SPI.
+         * @brief Select the SPI.
          */
-        void _lock()
+        void _select()
         {
             _spi.lock();
+            _cs = 0;
         }
         /**
-         * @brief Unlock the SPI.
+         * @brief Deselect the SPI.
          */
-        void _unlock()
+        void _deselect()
         {
+            _cs = 1;
             _spi.unlock();
         }
         /**
@@ -69,10 +72,10 @@ namespace modules
         template <typename iterable_t>
         void write(const iterable_t& iterable)
         {
-            _lock();
+            _select();
             for (const spi_bits_t& data : iterable)
                 _spi.write(data);
-            _unlock();
+            _deselect();
         }
         /**
          * @brief Write a sequence to the SPI. Lock is set @b automatically.
