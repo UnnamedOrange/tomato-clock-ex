@@ -1,5 +1,5 @@
 /**
- * @file tft_auxiliary_pins.hpp.hpp
+ * @file tft_auxiliary_pins.hpp
  * @author UnnamedOrange
  * @brief Utility functions for auxiliary pins (except SPI pins) for TFT module
  * on the tomato clock.
