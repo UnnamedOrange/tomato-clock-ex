@@ -439,7 +439,7 @@ namespace modules
                         125ms, [this]() { return console.has_updated(); }))
                 {
                     console.clear_update_tag();
-                    cursor_counter = 0;
+                    cursor_counter = 7;
                     draw_cursor = true;
                 }
                 else
