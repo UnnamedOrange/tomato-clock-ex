@@ -1,0 +1,19 @@
+# mbed
+.build
+.mbed
+projectfiles
+*.py*
+mbed-os
+BUILD
+
+# exported Keil
+*.uvoptx
+*.uvprojx
+*.uvguix.*
+GettingStarted.html
+mbed_config.h
+DebugConfig/
+EventRecorderStub.scvd
+
+# VS Code
+.vscode/

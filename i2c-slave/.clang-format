@@ -1,0 +1,12 @@
+Language: Cpp
+BasedOnStyle: Microsoft
+AccessModifierOffset: -4
+AllowShortFunctionsOnASingleLine: All
+AlwaysBreakTemplateDeclarations: Yes
+BraceWrapping:
+  AfterCaseLabel: true
+  AfterUnion: true
+ColumnLimit: 80
+IncludeBlocks: Preserve
+NamespaceIndentation: All
+PointerAlignment: Left
