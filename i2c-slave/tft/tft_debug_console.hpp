@@ -588,5 +588,12 @@ namespace modules
             console.print(buf);
             cv_draw.notify_one();
         }
+
+        void clear()
+        {
+            rtos::ScopedMutexLock lock(mutex_draw);
+            console.clear();
+            cv_draw.notify_one();
+        }
     };
 } // namespace modules

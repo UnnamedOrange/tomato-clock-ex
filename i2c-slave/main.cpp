@@ -65,20 +65,52 @@ namespace utils
             InterruptIn::fall(std::bind(&button_handler::on_fall, this));
         }
     };
-
 } // namespace utils
 
-int num;
 I2CSlave i2c{PB_9, PB_8};
+
+bool is_pause = false;
+int32_t current_value = 0;
+utils::system_clock::time_point time_previous{};
+constexpr std::array<utils::system_clock::duration, 3> intervals = {16ms, 200ms,
+                                                                    1000ms};
+size_t current_interval_index = 0;
+
+void pause()
+{
+    is_pause = !is_pause;
+    if (is_pause)
+        utils::console.printf("[-] Pause.\n");
+    else
+        utils::console.printf("[D] Pause.\n");
+}
+void clear()
+{
+    utils::console.clear();
+    utils::console.printf(R"(I2C Debugger
+Button 1 - Pause
+Button 2 - Clear
+Button 3 - Rate
+)");
+}
+void rate()
+{
+    current_interval_index++;
+    if (current_interval_index >= intervals.size())
+        current_interval_index = 0;
+    utils::console.printf("[I] Rate: %d ms.\n",
+                          intervals[current_interval_index].count());
+}
 
 int main()
 {
     using namespace utils;
-    using system_clock = Kernel::Clock;
+
+    // Initialize the console.
+    clear();
 
     // Init I2C.
-    {
-    }
+    i2c.address(0x02);
 
     // Init buttons.
     std::array<bool, 3> downs{};
@@ -89,17 +121,46 @@ int main()
     button2.set_callback([&]() { downs[1] = true; });
     button3.set_callback([&]() { downs[2] = true; });
 
-    // TODO: Set callbacks.
-    std::array<std::function<void()>, 3> on_button{};
+    // Set callbacks.
+    std::array<std::function<void()>, 3> on_button{pause, clear, rate};
 
     while (true)
     {
-        for (size_t i = 0; i < downs.size(); i++)
-            if (downs[i])
+        // Update buttons.
+        {
+            for (size_t i = 0; i < downs.size(); i++)
+                if (downs[i])
+                {
+                    if (on_button[i])
+                        on_button[i]();
+                    downs[i] = false;
+                }
+        }
+
+        // Check I2C.
+        {
+            int slave_action = i2c.receive();
+            if (slave_action == I2CSlave::ReadAddressed)
             {
-                if (on_button[i])
-                    on_button[i]();
-                downs[i] = false;
+                // Do not respond if the interval is shorter than the threshold.
+                if (system_clock::now() - time_previous >=
+                    intervals[current_interval_index])
+                {
+                    current_value++;
+
+                    utils::console.printf("[-] Write %d.\n", current_value);
+                    int result;
+                    result =
+                        i2c.write(reinterpret_cast<const char*>(&current_value),
+                                  sizeof(current_value));
+                    if (!result)
+                        utils::console.printf("[D] Write %d.\n", current_value);
+                    else
+                        utils::console.printf("[F] Write %d.\n", current_value);
+
+                    time_previous = system_clock::now();
+                }
             }
+        }
     }
 }
