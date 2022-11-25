@@ -74,6 +74,7 @@ int32_t current_value = 0;
 utils::system_clock::time_point time_previous{};
 constexpr std::array<utils::system_clock::duration, 3> intervals = {16ms, 200ms,
                                                                     1000ms};
+constexpr size_t highspeed_interval_index = 0;
 size_t current_interval_index = 0;
 
 void pause()
@@ -93,6 +94,8 @@ Button 1 - Pause
 Button 2 - Reset
 Button 3 - Rate
 )");
+    if (current_interval_index <= highspeed_interval_index)
+        utils::console.printf("[W] No echo.\n");
 }
 void rate()
 {
@@ -101,6 +104,8 @@ void rate()
         current_interval_index = 0;
     utils::console.printf("[I] Rate: %d ms.\n",
                           intervals[current_interval_index].count());
+    if (current_interval_index <= highspeed_interval_index)
+        utils::console.printf("[W] No echo.\n");
 }
 
 int main()
@@ -157,14 +162,22 @@ int main()
                 int result;
                 if (update)
                 {
-                    utils::console.printf("[-] Write %d.\n", current_value);
+                    if (current_interval_index > highspeed_interval_index)
+                    {
+                        utils::console.printf("[-] Write %d.\n", current_value);
+                    }
                     result =
                         i2c.write(reinterpret_cast<const char*>(&current_value),
                                   sizeof(current_value));
-                    if (!result)
-                        utils::console.printf("[D] Write %d.\n", current_value);
-                    else
-                        utils::console.printf("[F] Write %d.\n", current_value);
+                    if (current_interval_index > highspeed_interval_index)
+                    {
+                        if (!result)
+                            utils::console.printf("[D] Write %d.\n",
+                                                  current_value);
+                        else
+                            utils::console.printf("[F] Write %d.\n",
+                                                  current_value);
+                    }
                 }
                 else
                 {
