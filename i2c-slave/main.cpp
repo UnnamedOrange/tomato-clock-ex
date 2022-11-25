@@ -138,6 +138,7 @@ int main()
         }
 
         // Check I2C.
+        if (!is_pause)
         {
             int slave_action = i2c.receive();
             if (slave_action == I2CSlave::ReadAddressed)
