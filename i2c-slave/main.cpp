@@ -84,12 +84,13 @@ void pause()
     else
         utils::console.printf("[D] Pause.\n");
 }
-void clear()
+void reset()
 {
+    is_pause = false;
     utils::console.clear();
     utils::console.printf(R"(I2C Debugger
 Button 1 - Pause
-Button 2 - Clear
+Button 2 - Reset
 Button 3 - Rate
 )");
 }
@@ -107,7 +108,7 @@ int main()
     using namespace utils;
 
     // Initialize the console.
-    clear();
+    reset();
 
     // Init I2C.
     i2c.address(0x02);
@@ -122,7 +123,7 @@ int main()
     button3.set_callback([&]() { downs[2] = true; });
 
     // Set callbacks.
-    std::array<std::function<void()>, 3> on_button{pause, clear, rate};
+    std::array<std::function<void()>, 3> on_button{pause, reset, rate};
 
     while (true)
     {
