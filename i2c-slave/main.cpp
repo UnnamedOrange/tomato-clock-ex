@@ -144,14 +144,20 @@ int main()
             int slave_action = i2c.receive();
             if (slave_action == I2CSlave::ReadAddressed)
             {
+                bool update = false;
                 // Do not respond if the interval is shorter than the threshold.
                 if (system_clock::now() - time_previous >=
                     intervals[current_interval_index])
                 {
                     current_value++;
+                    update = true;
+                    time_previous = system_clock::now();
+                }
 
+                int result;
+                if (update)
+                {
                     utils::console.printf("[-] Write %d.\n", current_value);
-                    int result;
                     result =
                         i2c.write(reinterpret_cast<const char*>(&current_value),
                                   sizeof(current_value));
@@ -159,8 +165,13 @@ int main()
                         utils::console.printf("[D] Write %d.\n", current_value);
                     else
                         utils::console.printf("[F] Write %d.\n", current_value);
-
-                    time_previous = system_clock::now();
+                }
+                else
+                {
+                    result =
+                        i2c.write(reinterpret_cast<const char*>(&current_value),
+                                  sizeof(current_value));
+                    utils::console.printf("[W] Repeated %d.\n", current_value);
                 }
             }
         }
