@@ -111,7 +111,7 @@ int main()
     reset();
 
     // Init I2C.
-    i2c.address(0x02);
+    i2c.address(0x10);
 
     // Init buttons.
     std::array<bool, 3> downs{};
